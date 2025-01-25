@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEPA Tariff Finder</title>
+</head>
+<body>
+    <h1>TEPA Tariff Finder</h1>
+    <input type="text" id="query" placeholder="Enter keyword or HS code">
+    <button onclick="searchTariff()">Search</button>
+    <div id="results"></div>
+    <script>
+        function searchTariff() {
+            const query = document.getElementById('query').value;
+            if (!query) {
+                alert('Please enter a keyword or HS code.');
+                return;
+            }
+
+            fetch(`TariffFinder.php?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+                    if (data.error) {
+                        resultsDiv.innerHTML = `<p>${data.error}</p>`;
+                        return;
+                    }
+                    data.forEach(item => {
+                        resultsDiv.innerHTML += `<p>${item.description} - ${item.tariff}</p>`;
+                    });
+                })
+                .catch(err => console.error(err));
+        }
+    </script>
+</body>
+</html>
